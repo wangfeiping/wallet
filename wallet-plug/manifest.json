@@ -1,0 +1,11 @@
+{
+    "name": "todo-plugin",
+    "version": "0.9.0",
+    "manifest_version": 2,
+    "description": "chrome plugin demo",
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_title": "Todo List",
+        "default_popup": "popup.html"
+    }
+}
