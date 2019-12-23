@@ -92,7 +92,10 @@ class StocksAppState extends State<StocksApp> {
       return true;
     }());
     return MaterialApp(
-      title: 'Stocks',
+      // title: 'Stocks',
+      onGenerateTitle: (context){                                              // 此处
+        return StockStrings.of(context).title;
+      },
       theme: theme,
       localizationsDelegates: StockStrings.localizationsDelegates,
       supportedLocales: StockStrings.supportedLocales,

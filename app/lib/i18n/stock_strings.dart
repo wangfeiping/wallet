@@ -91,6 +91,7 @@ class StockStrings {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en', 'US'),
     Locale('es', 'ES'),
+    Locale('zh', 'CH'),
   ];
 
   String get market {
@@ -129,7 +130,7 @@ class _StockStringsDelegate extends LocalizationsDelegate<StockStrings> {
   Future<StockStrings> load(Locale locale) => StockStrings.load(locale);
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'es', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_StockStringsDelegate old) => false;

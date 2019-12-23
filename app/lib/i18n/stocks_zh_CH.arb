@@ -1,0 +1,16 @@
+{
+  "title": "黎明世界",
+  "@title": {
+    "description": "Title for the Stocks application"
+  },
+
+  "market": "警报",
+  "@market": {
+    "description": "Label for the Market tab"
+  },
+
+  "portfolio": "事件",
+  "@portfolio": {
+    "description": "Label for the Portfolio tab"
+  }
+}
