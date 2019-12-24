@@ -6,3 +6,11 @@ app/build
 app/.packages
 app/.dart_tool/
 app/pubspec.lock
+.vscode/
+app/android/.gradle/
+app/android/.project
+app/android/.settings/
+app/android/app/.classpath
+app/android/app/.project
+app/android/app/.settings/
+
