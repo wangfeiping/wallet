@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show debugDumpRenderTree, debugDumpLayerTree, debugDumpSemanticsTree, DebugSemanticsDumpOrder;
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter/gestures.dart' show DragStartBehavior;
+import 'package:vibrate/vibrate.dart';
 
 import 'i18n/stock_strings.dart';
 import 'stock_data.dart';
@@ -184,7 +185,11 @@ class StockHomeState extends State<StockHome> {
     Navigator.popAndPushNamed(context, '/settings');
   }
 
-  void _handleShowAbout() {
+  void _handleShowAbout() async{
+    bool canVibrate = await Vibrate.canVibrate;
+    if (canVibrate) {
+      Vibrate.vibrate();
+    }
     showAboutDialog(context: context);
   }
 
