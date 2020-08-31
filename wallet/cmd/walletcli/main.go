@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/wangfeiping/wallet/wallet/adapter"
 	"github.com/wangfeiping/wallet/wallet/version"
 )
 
@@ -80,7 +81,8 @@ func doCreate(_ *cobra.Command, _ []string) error {
 	viper.Set(FlagHome, home)
 
 	fmt.Println("do create...")
-	// showJSONString(ret)
+	ret := adapter.CreateSeed()
+	showJSONString(ret)
 	return nil
 }
 

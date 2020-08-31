@@ -23,13 +23,13 @@ var (
 )
 
 func ShowVersion() {
-	fmt.Printf(`%s: %s
-with:
+	fmt.Printf(`%s		: %s
+with		:
   %s
   %s
-git commit: %s
-build tags: %s
-%s
+git commit	: %s
+build tags	: %s
+go		: %s
 `,
 		Name, Version,
 		VersionCosmos, VersionEthereum,
