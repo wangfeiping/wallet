@@ -1,16 +1,12 @@
-
-wallet/wallet.aar
-wallet/wallet-sources.jar
-
-app/build
-app/.packages
-app/.dart_tool/
-app/pubspec.lock
+build/
 .vscode/
-app/android/.gradle/
-app/android/.project
-app/android/.settings/
-app/android/app/.classpath
-app/android/app/.project
-app/android/app/.settings/
+
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.gradle/
+.project
+.settings/
+.classpath
 
