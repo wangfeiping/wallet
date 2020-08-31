@@ -41,7 +41,7 @@ func main() {
 		RunE:  doRecover,
 	}
 	cmdRecover.Flags().StringP(FlagMnemonic, "m", "", "mnemonic")
-	cmdRecover.Flags().StringP(FlagPass, "p", "", "passworld")
+	cmdRecover.Flags().StringP(FlagPass, "p", "", "password")
 
 	cmdUpdate := &cobra.Command{
 		Use:   "update",
