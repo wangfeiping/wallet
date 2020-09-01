@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/wangfeiping/wallet/wallet/adapter"
+	"github.com/wangfeiping/wallet/wallet/adapter/types"
 	"github.com/wangfeiping/wallet/wallet/version"
 )
 
@@ -81,7 +82,16 @@ func doCreate(_ *cobra.Command, _ []string) error {
 	viper.Set(FlagHome, home)
 
 	fmt.Println("do create...")
+	var seed types.SeedOutput
 	ret := adapter.CreateSeed()
+	if err := json.Unmarshal([]byte(ret), &seed); err != nil {
+		fmt.Println("error: ", err)
+		return err
+	}
+
+	showJSONString(ret)
+	ret = adapter.CreateAccount("./wallet_root/", "test", "12345678", seed.Seed)
+	fmt.Println("create account: ", ret)
 	showJSONString(ret)
 	return nil
 }
