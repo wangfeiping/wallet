@@ -19,7 +19,7 @@ func main() {
 
 	rootCmd := &cobra.Command{
 		Use:   "wallet",
-		Short: "Command line interface for cosmos&eth wallet",
+		Short: "Command line interface for cosmos & ethereum wallet",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			viper.BindPFlags(cmd.Flags())
 			return nil
@@ -43,31 +43,12 @@ func main() {
 	cmdRecover.Flags().StringP(types.FlagPasswd, "p", "", "password")
 	cmdRecover.Flags().StringP(types.FlagMnemonic, "m", "", "mnemonic")
 
-	cmdUpdate := &cobra.Command{
-		Use:   "update",
-		Short: "Update the password",
-		RunE:  doUpdate,
-	}
-
-	cmdQuery := &cobra.Command{
-		Use:   "query",
-		Short: "Query account info",
-		RunE:  doQuery,
-	}
-
-	cmdList := &cobra.Command{
-		Use:   "list",
-		Short: "List account",
-		RunE:  doList,
-	}
-
 	cmdVersion := &cobra.Command{
 		Use:   "version",
 		Short: "Show version info",
 		RunE:  doVersion,
 	}
-	rootCmd.AddCommand(cmdCreate, cmdRecover, cmdUpdate, cmdQuery,
-		cmdList, cmdVersion)
+	rootCmd.AddCommand(cmdCreate, cmdRecover, cmdVersion)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -88,7 +69,7 @@ func doCreate(_ *cobra.Command, _ []string) error {
 	}
 
 	showJSONString(ret)
-	ret = adapter.CreateAccount("./wallet_root/", "test", "12345678", seed.Seed)
+	ret = adapter.CosmosCreateAccount("./wallet_root/", "test", "12345678", seed.Seed)
 	fmt.Println("create account: ", ret)
 	showJSONString(ret)
 	return nil
@@ -110,35 +91,24 @@ func doRecover(_ *cobra.Command, _ []string) error {
 		return fmt.Errorf("please input the mnemonic")
 	}
 
-	ret := adapter.RecoverKey(home, name, passwd, mnem)
+	var ko types.KeyOutput
+	fmt.Println("--- cosmos")
+	ret := adapter.CosmosRecoverKey(home, name, passwd, mnem)
 	showJSONString(ret)
-	return nil
-}
+	if err := json.Unmarshal([]byte(ret), &ko); err != nil {
+		fmt.Println("error: ", err)
+		return err
+	}
+	fmt.Println(ko.PrivKeyArmor)
 
-func doUpdate(_ *cobra.Command, _ []string) error {
-	home := os.ExpandEnv(viper.GetString(types.FlagHome))
-	viper.Set(types.FlagHome, home)
-
-	fmt.Println("do update...")
-	// showJSONString(ret)
-	return nil
-}
-
-func doQuery(_ *cobra.Command, _ []string) error {
-	home := os.ExpandEnv(viper.GetString(types.FlagHome))
-	viper.Set(types.FlagHome, home)
-
-	fmt.Println("do query...")
-	// showJSONString(ret)
-	return nil
-}
-
-func doList(_ *cobra.Command, _ []string) error {
-	home := os.ExpandEnv(viper.GetString(types.FlagHome))
-	viper.Set(types.FlagHome, home)
-
-	fmt.Println("listing...")
-	// showJSONString(ret)
+	fmt.Println("--- ethereum")
+	ret = adapter.EthRecoverAccount(home, name, passwd, mnem)
+	showJSONString(ret)
+	if err := json.Unmarshal([]byte(ret), &ko); err != nil {
+		fmt.Println("error: ", err)
+		return err
+	}
+	fmt.Println(ko.PrivKeyArmor)
 	return nil
 }
 

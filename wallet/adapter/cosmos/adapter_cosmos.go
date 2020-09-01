@@ -40,7 +40,7 @@ var _ types.Adapter = (*AdapterCosmos)(nil)
 type AdapterCosmos struct {
 }
 
-// CreateAccount returns the json string for the created account.
+// CreateAccount returns the account info that created with name, password and mnemonic input.
 func (a *AdapterCosmos) CreateAccount(rootDir, name,
 	password, seed string) (ko types.KeyOutput, err error) {
 	viper.Set(types.FlagHome, rootDir)
@@ -101,5 +101,12 @@ func (a *AdapterCosmos) CreateAccount(rootDir, name,
 	ko.PubKey = keyOutput.PubKey
 	ko.Denom = defaultDenomName
 	ko.Seed = seed
+
+	var armor string
+	armor, err = kb.ExportPrivKeyArmorByAddress(info.GetAddress(), password)
+	if err != nil {
+		return
+	}
+	ko.PrivKeyArmor = armor
 	return
 }

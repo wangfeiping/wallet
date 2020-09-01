@@ -4,13 +4,16 @@ import (
 	"encoding/json"
 
 	"github.com/wangfeiping/wallet/wallet/adapter/cosmos"
+	"github.com/wangfeiping/wallet/wallet/adapter/ethereum"
 	"github.com/wangfeiping/wallet/wallet/adapter/types"
 )
 
 var cosmosAdapter types.Adapter
+var ethereumAdapter types.Adapter
 
 func init() {
 	cosmosAdapter = &cosmos.AdapterCosmos{}
+	ethereumAdapter = &ethereum.AdapterEthereum{}
 }
 
 func CreateSeed() string {
@@ -26,7 +29,8 @@ func CreateSeed() string {
 	return string(bytes)
 }
 
-func CreateAccount(rootDir, name, passwd, seed string) string {
+// CosmosCreateAccount returns the account info that created with name, password and mnemonic input
+func CosmosCreateAccount(rootDir, name, passwd, seed string) string {
 	acc, err := cosmosAdapter.CreateAccount(rootDir, name, passwd, seed)
 	if err != nil {
 		acc.Error = err.Error()
@@ -35,9 +39,31 @@ func CreateAccount(rootDir, name, passwd, seed string) string {
 	return string(bytes)
 }
 
-// RecoverKey returns the account info that recovered with name, password and mnemonic input
-func RecoverKey(rootDir, name, passwd, seed string) string {
+// CosmosRecoverKey returns the account info that recovered with name, password and mnemonic input
+func CosmosRecoverKey(rootDir, name, passwd, seed string) string {
 	acc, err := cosmosAdapter.CreateAccount(rootDir, name, passwd, seed)
+	if err != nil {
+		acc.Error = err.Error()
+	}
+	acc.Seed = ""
+	bytes, _ := json.Marshal(acc)
+	return string(bytes)
+}
+
+// Ethereum part
+
+// EthCreateAccount returns the account info that created with name, password and mnemonic input.
+func EthCreateAccount(rootDir, name, passwd, seed string) string {
+	acc, err := ethereumAdapter.CreateAccount(rootDir, name, passwd, seed)
+	if err != nil {
+		acc.Error = err.Error()
+	}
+	bytes, _ := json.Marshal(acc)
+	return string(bytes)
+}
+
+func EthRecoverAccount(rootDir, name, passwd, seed string) string {
+	acc, err := ethereumAdapter.CreateAccount(rootDir, name, passwd, seed)
 	if err != nil {
 		acc.Error = err.Error()
 	}

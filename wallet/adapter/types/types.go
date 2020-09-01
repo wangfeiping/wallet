@@ -10,13 +10,14 @@ type SeedOutput struct {
 }
 
 type KeyOutput struct {
-	Name    string `json:"name"`
-	Type    string `json:"type"`
-	Address string `json:"address"`
-	PubKey  string `json:"pub_key"`
-	Seed    string `json:"seed,omitempty"`
-	Denom   string `json:"denom"`
-	Error   string `json:"error"`
+	Name         string `json:"name"`
+	Type         string `json:"type"`
+	Address      string `json:"address"`
+	PubKey       string `json:"pub_key"`
+	PrivKeyArmor string `json:"priv_key_armor,omitempty"`
+	Seed         string `json:"seed,omitempty"`
+	Denom        string `json:"denom"`
+	Error        string `json:"error"`
 }
 
 type Adapter interface {
