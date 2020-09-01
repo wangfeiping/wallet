@@ -14,7 +14,7 @@ func init() {
 }
 
 func CreateSeed() string {
-	mnem, err := cosmosAdapter.CreateSeed()
+	mnem, err := cosmos.CreateSeed()
 	// json output the seed
 	var seed types.SeedOutput
 	if err != nil {
@@ -26,11 +26,22 @@ func CreateSeed() string {
 	return string(bytes)
 }
 
-func CreateAccount(rootDir, name, password, seed string) string {
-	acc, err := cosmosAdapter.CreateAccount(rootDir, name, password, seed)
+func CreateAccount(rootDir, name, passwd, seed string) string {
+	acc, err := cosmosAdapter.CreateAccount(rootDir, name, passwd, seed)
 	if err != nil {
 		acc.Error = err.Error()
 	}
+	bytes, _ := json.Marshal(acc)
+	return string(bytes)
+}
+
+// RecoverKey returns the account info that recovered with name, password and mnemonic input
+func RecoverKey(rootDir, name, passwd, seed string) string {
+	acc, err := cosmosAdapter.CreateAccount(rootDir, name, passwd, seed)
+	if err != nil {
+		acc.Error = err.Error()
+	}
+	acc.Seed = ""
 	bytes, _ := json.Marshal(acc)
 	return string(bytes)
 }

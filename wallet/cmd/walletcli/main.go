@@ -14,36 +14,34 @@ import (
 	"github.com/wangfeiping/wallet/wallet/version"
 )
 
-// no-lint
-const (
-	FlagHome     = "home"
-	FlagMnemonic = "mnemonic"
-	FlagPass     = "passwd"
-)
-
 func main() {
 	cobra.EnableCommandSorting = false
 
 	rootCmd := &cobra.Command{
 		Use:   "wallet",
 		Short: "Command line interface for cosmos&eth wallet",
+		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
+			viper.BindPFlags(cmd.Flags())
+			return nil
+		},
 	}
-	rootCmd.PersistentFlags().String(FlagHome, "$HOME/.coscli/", "home dir")
-	viper.BindPFlag(FlagHome, rootCmd.PersistentFlags().Lookup(FlagHome))
+	rootCmd.PersistentFlags().String(types.FlagHome, "$HOME/.coscli/", "home dir")
 
 	cmdCreate := &cobra.Command{
 		Use:   "create",
 		Short: "Create an account",
 		RunE:  doCreate,
 	}
+	cmdCreate.Flags().Int16P(types.FlagBitSize, "b", 0, "bit size of the mnemonic")
 
 	cmdRecover := &cobra.Command{
 		Use:   "recover",
 		Short: "Recover an account from mnemonic",
 		RunE:  doRecover,
 	}
-	cmdRecover.Flags().StringP(FlagMnemonic, "m", "", "mnemonic")
-	cmdRecover.Flags().StringP(FlagPass, "p", "", "password")
+	cmdRecover.Flags().StringP(types.FlagName, "n", "", "name")
+	cmdRecover.Flags().StringP(types.FlagPasswd, "p", "", "password")
+	cmdRecover.Flags().StringP(types.FlagMnemonic, "m", "", "mnemonic")
 
 	cmdUpdate := &cobra.Command{
 		Use:   "update",
@@ -78,8 +76,8 @@ func main() {
 }
 
 func doCreate(_ *cobra.Command, _ []string) error {
-	home := os.ExpandEnv(viper.GetString(FlagHome))
-	viper.Set(FlagHome, home)
+	home := os.ExpandEnv(viper.GetString(types.FlagHome))
+	viper.Set(types.FlagHome, home)
 
 	fmt.Println("do create...")
 	var seed types.SeedOutput
@@ -97,28 +95,29 @@ func doCreate(_ *cobra.Command, _ []string) error {
 }
 
 func doRecover(_ *cobra.Command, _ []string) error {
-	home := os.ExpandEnv(viper.GetString(FlagHome))
-	viper.Set(FlagHome, home)
-	// qosacc19ee0dmedngya6akhyyc2fllqq8hmrgkn24n62g
-	// m := "wage maximum acid car catalog aisle attend rookie outdoor unusual donkey script maximum weather tiger expire negative wine evidence grass lemon forget concert planet"
-	// regular trumpet envelope oak jar loop comic turkey forest frozen divide pond identify increase magnet power alarm develop depart manual dry gap coin bubble
-
-	m := viper.GetString(FlagMnemonic)
-	if m == "" {
+	home := os.ExpandEnv(viper.GetString(types.FlagHome))
+	viper.Set(types.FlagHome, home)
+	name := viper.GetString(types.FlagName)
+	if name == "" {
+		return fmt.Errorf("please input the name")
+	}
+	passwd := viper.GetString(types.FlagPasswd)
+	if passwd == "" {
+		return fmt.Errorf("please input the password")
+	}
+	mnem := viper.GetString(types.FlagMnemonic)
+	if mnem == "" {
 		return fmt.Errorf("please input the mnemonic")
 	}
-	p := viper.GetString(FlagPass)
-	if p == "" {
-		return fmt.Errorf("please input the passwd")
-	}
 
-	// showJSONString(ret)
+	ret := adapter.RecoverKey(home, name, passwd, mnem)
+	showJSONString(ret)
 	return nil
 }
 
 func doUpdate(_ *cobra.Command, _ []string) error {
-	home := os.ExpandEnv(viper.GetString(FlagHome))
-	viper.Set(FlagHome, home)
+	home := os.ExpandEnv(viper.GetString(types.FlagHome))
+	viper.Set(types.FlagHome, home)
 
 	fmt.Println("do update...")
 	// showJSONString(ret)
@@ -126,8 +125,8 @@ func doUpdate(_ *cobra.Command, _ []string) error {
 }
 
 func doQuery(_ *cobra.Command, _ []string) error {
-	home := os.ExpandEnv(viper.GetString(FlagHome))
-	viper.Set(FlagHome, home)
+	home := os.ExpandEnv(viper.GetString(types.FlagHome))
+	viper.Set(types.FlagHome, home)
 
 	fmt.Println("do query...")
 	// showJSONString(ret)
@@ -135,8 +134,8 @@ func doQuery(_ *cobra.Command, _ []string) error {
 }
 
 func doList(_ *cobra.Command, _ []string) error {
-	home := os.ExpandEnv(viper.GetString(FlagHome))
-	viper.Set(FlagHome, home)
+	home := os.ExpandEnv(viper.GetString(types.FlagHome))
+	viper.Set(types.FlagHome, home)
 
 	fmt.Println("listing...")
 	// showJSONString(ret)

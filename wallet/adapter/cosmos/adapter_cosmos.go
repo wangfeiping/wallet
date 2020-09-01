@@ -18,14 +18,13 @@ const (
 	defaultDenomName   = "uatom"
 )
 
-var _ types.Adapter = (*AdapterCosmos)(nil)
-
-type AdapterCosmos struct {
-}
-
 // CreateSeed returns mnemonics with bip39 to output 12-word list
-func (a *AdapterCosmos) CreateSeed() (string, error) {
-	entropy, err := bip39.NewEntropy(defaultEntropySize)
+func CreateSeed() (string, error) {
+	bitSize := viper.GetInt(types.FlagBitSize)
+	if bitSize <= 0 {
+		bitSize = defaultEntropySize
+	}
+	entropy, err := bip39.NewEntropy(bitSize)
 	if err != nil {
 		return "", err
 	}
@@ -36,10 +35,15 @@ func (a *AdapterCosmos) CreateSeed() (string, error) {
 	return mnemonic, nil
 }
 
+var _ types.Adapter = (*AdapterCosmos)(nil)
+
+type AdapterCosmos struct {
+}
+
 // CreateAccount returns the json string for the created account.
 func (a *AdapterCosmos) CreateAccount(rootDir, name,
 	password, seed string) (ko types.KeyOutput, err error) {
-	viper.Set("home", rootDir)
+	viper.Set(types.FlagHome, rootDir)
 	kb := keyring.NewInMemory()
 
 	//check out the input
@@ -95,7 +99,7 @@ func (a *AdapterCosmos) CreateAccount(rootDir, name,
 	ko.Type = keyOutput.Type
 	ko.Address = keyOutput.Address
 	ko.PubKey = keyOutput.PubKey
-	ko.Seed = seed
 	ko.Denom = defaultDenomName
+	ko.Seed = seed
 	return
 }
