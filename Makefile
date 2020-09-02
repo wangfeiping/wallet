@@ -9,7 +9,7 @@ APP_NAME=wallet
 ldflags = -X github.com/wangfeiping/wallet/wallet/version.Name=$(APP_NAME) \
 	-X github.com/wangfeiping/wallet/wallet/version.Version=$(VERSION) \
 	-X "github.com/wangfeiping/wallet/wallet/version.VersionCosmos=github.com/cosmos/cosmos-sdk v0.34.4-0.20200829041113-200e88ba075b" \
-	-X "github.com/wangfeiping/wallet/wallet/version.VersionEthereum=github.com/ethereum/go-ethereum v1.9.18" \
+	-X "github.com/wangfeiping/wallet/wallet/version.VersionEthereum=github.com/ethereum/go-ethereum v1.9.20" \
 	-X github.com/wangfeiping/wallet/wallet/version.Commit=$(COMMIT) 
 
 BUILD_FLAGS := -ldflags '$(ldflags)'

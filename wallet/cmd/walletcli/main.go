@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 
+	"github.com/cosmos/cosmos-sdk/client/input"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -40,8 +42,6 @@ func main() {
 		RunE:  doRecover,
 	}
 	cmdRecover.Flags().StringP(types.FlagName, "n", "", "name")
-	cmdRecover.Flags().StringP(types.FlagPasswd, "p", "", "password")
-	cmdRecover.Flags().StringP(types.FlagMnemonic, "m", "", "mnemonic")
 
 	cmdVersion := &cobra.Command{
 		Use:   "version",
@@ -75,40 +75,49 @@ func doCreate(_ *cobra.Command, _ []string) error {
 	return nil
 }
 
-func doRecover(_ *cobra.Command, _ []string) error {
+func doRecover(cmd *cobra.Command, _ []string) error {
 	home := os.ExpandEnv(viper.GetString(types.FlagHome))
 	viper.Set(types.FlagHome, home)
 	name := viper.GetString(types.FlagName)
 	if name == "" {
 		return fmt.Errorf("please input the name")
 	}
-	passwd := viper.GetString(types.FlagPasswd)
-	if passwd == "" {
-		return fmt.Errorf("please input the password")
+	// passwd := viper.GetString(types.FlagPasswd)
+	// if passwd == "" {
+	// 	return fmt.Errorf("please input the password")
+	// }
+	// mnem := viper.GetString(types.FlagMnemonic)
+	// if mnem == "" {
+	// 	return fmt.Errorf("please input the mnemonic")
+	// }
+	buf := bufio.NewReader(cmd.InOrStdin())
+	passwd, err := input.GetString(types.FlagPasswd, buf)
+	if err != nil {
+		return err
 	}
-	mnem := viper.GetString(types.FlagMnemonic)
-	if mnem == "" {
-		return fmt.Errorf("please input the mnemonic")
+	mnem, err := input.GetString(types.FlagMnemonic, buf)
+	if err != nil {
+		return err
 	}
 
-	var ko types.KeyOutput
+	// var ko types.KeyOutput
 	fmt.Println("--- cosmos")
 	ret := adapter.CosmosRecoverKey(home, name, passwd, mnem)
 	showJSONString(ret)
-	if err := json.Unmarshal([]byte(ret), &ko); err != nil {
-		fmt.Println("error: ", err)
-		return err
-	}
-	fmt.Println(ko.PrivKeyArmor)
+	// if err := json.Unmarshal([]byte(ret), &ko); err != nil {
+	// 	fmt.Println("error: ", err)
+	// 	return err
+	// }
+	// fmt.Println(ko.PrivKeyArmor)
 
 	fmt.Println("--- ethereum")
 	ret = adapter.EthRecoverAccount(home, name, passwd, mnem)
 	showJSONString(ret)
-	if err := json.Unmarshal([]byte(ret), &ko); err != nil {
-		fmt.Println("error: ", err)
-		return err
-	}
-	fmt.Println(ko.PrivKeyArmor)
+	// if err := json.Unmarshal([]byte(ret), &ko); err != nil {
+	// 	fmt.Println("error: ", err)
+	// 	return err
+	// }
+	// fmt.Println(ko.PrivKeyArmor)
 	return nil
 }
 

@@ -3,6 +3,8 @@ package adapter
 import (
 	"encoding/json"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/wangfeiping/wallet/wallet/adapter/cosmos"
 	"github.com/wangfeiping/wallet/wallet/adapter/ethereum"
 	"github.com/wangfeiping/wallet/wallet/adapter/types"
@@ -11,7 +13,10 @@ import (
 var cosmosAdapter types.Adapter
 var ethereumAdapter types.Adapter
 
+var KeysCdc *codec.LegacyAmino
+
 func init() {
+	KeysCdc = codec.New()
 	cosmosAdapter = &cosmos.AdapterCosmos{}
 	ethereumAdapter = &ethereum.AdapterEthereum{}
 }
@@ -46,7 +51,8 @@ func CosmosRecoverKey(rootDir, name, passwd, seed string) string {
 		acc.Error = err.Error()
 	}
 	acc.Seed = ""
-	bytes, _ := json.Marshal(acc)
+	// bytes, _ := json.Marshal(acc)
+	bytes, _ := KeysCdc.MarshalJSON(acc)
 	return string(bytes)
 }
 

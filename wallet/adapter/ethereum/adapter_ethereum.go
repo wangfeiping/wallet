@@ -150,8 +150,7 @@ func (e *AdapterEthereum) CreateAccount(rootDir, name,
 	ko.Type = "local"
 	ko.Address = LInfo.Address
 	ko.PubKey = LInfo.PubKey
-	// ko.PrivKeyArmor = LInfo.PrivKeyArmor
-	ko.PrivKeyArmor = hexutil.Encode(crypto.FromECDSA(privateKeyECDSA))[2:]
+	// ko.PrivKeyArmor = hexutil.Encode(crypto.FromECDSA(privateKeyECDSA))[2:]
 	ko.Denom = "ETH"
 	ko.Seed = mnemonic
 	return
